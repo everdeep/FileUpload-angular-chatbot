@@ -1,10 +1,15 @@
 # coding=utf-8
 
+import random
+
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 
 from .entities.entity import Session, engine, Base
+
+#== Example entity - to be deleted in production ===
 from .entities.example import Example, ExampleSchema
+#===================================================
 
 # creating the Flask application
 app = Flask(__name__)
@@ -13,7 +18,48 @@ CORS(app)
 # if needed, generate database schema
 Base.metadata.create_all(engine)
 
+phrases = [
+    "you suck, don't talk to me...",
+    "do you have ligma or something?",
+    "go commit not alive",
+    "you're a punk",
+    "leave me alone pls",
+    "Oi don't talk smack, otherwise you get a whack",
+    "do you want to buy some drugs?",
+    "do I seem intelligent to you?",
+    "have I been repeated myself lately?",
+    "I feel like my vocabulary is a bit small",
+    "hey, do you think I pass the turing test?",
+    "yes",
+    "no"
+]
 
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+#===================================================
+#   Chatbot API routes
+#===================================================
+
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    shutdown_server()
+    return 'Server shutting down...'
+
+@app.route('/response', methods=['POST'])
+def get_response():
+    message = request.get_json()['value']
+    print('Received from chatbot:', message)
+    index = random.randrange(13)
+    return jsonify({'value': phrases[index]})
+
+
+#===================================================
+#   EXAMPLE GET REQUEST WITH DATABASE ACCESS
+#===================================================
 @app.route('/examples')
 def get_examples():
     # fetching from the database
@@ -29,6 +75,9 @@ def get_examples():
     return jsonify(examples.data)
 
 
+#===================================================
+#   EXAMPLE POST REQUEST WITH DATABASE ACCESS
+#===================================================
 @app.route('/examples', methods=['POST'])
 def add_example():
     # mount example object
@@ -46,3 +95,5 @@ def add_example():
     new_example = ExampleSchema().dump(example).data
     session.close()
     return jsonify(new_example), 201
+
+#===================================================
