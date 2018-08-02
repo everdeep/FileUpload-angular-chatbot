@@ -5,6 +5,7 @@ from sqlalchemy import create_engine, Column, String, Integer, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+# Database information
 db_url = 'localhost:5432'
 db_name = 'chatbot'
 db_user = 'postgres'

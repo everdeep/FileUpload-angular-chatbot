@@ -4,6 +4,7 @@ import random
 
 from flask_cors import CORS
 from flask import Flask, jsonify, request
+from .auth import AuthError, requires_auth
 
 from .entities.entity import Session, engine, Base
 
@@ -34,22 +35,27 @@ phrases = [
     "no"
 ]
 
+#===================================================
+#   Manual shutdown
+#===================================================
+
 def shutdown_server():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
 
-#===================================================
-#   Chatbot API routes
-#===================================================
-
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
     shutdown_server()
     return 'Server shutting down...'
 
+#===================================================
+#   Chatbot API routes
+#===================================================
+
 @app.route('/response', methods=['POST'])
+@requires_auth
 def get_response():
     message = request.get_json()['value']
     print('Received from chatbot:', message)
@@ -57,10 +63,17 @@ def get_response():
     return jsonify({'value': phrases[index]})
 
 
+@app.errorhandler(AuthError)
+def handle_auth_error(ex):
+    response = jsonify(ex.error)
+    response.status_code = ex.status_code
+    return response
+
 #===================================================
 #   EXAMPLE GET REQUEST WITH DATABASE ACCESS
 #===================================================
 @app.route('/examples')
+@requires_auth
 def get_examples():
     # fetching from the database
     session = Session()
@@ -81,7 +94,7 @@ def get_examples():
 @app.route('/examples', methods=['POST'])
 def add_example():
     # mount example object
-    posted_example = ExampleSchema(only=('title', 'description'))\
+    posted_example = ExampleSchema(only=('title', 'description')) \
         .load(request.get_json())
 
     example = Example(**posted_example.data, created_by="HTTP post request")

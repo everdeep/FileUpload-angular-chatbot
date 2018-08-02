@@ -1,0 +1,8 @@
+# copy token into env variable
+JWT="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik5EazFNRGxEUXpFd04wTXlOemt5TURZM09UaEVPVEkwTjBFek5UbEZNemd3TURrek1EZENRdyJ9.eyJpc3MiOiJodHRwczovL3NlYndiLmF1LmF1dGgwLmNvbS8iLCJzdWIiOiIwNmszNTcyV3BtVmR2Qm5JaVlxWkdZMWM2S3p5NHVZbkBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9ldmUuY2hhYm90LmFpIiwiaWF0IjoxNTMzMTIwNTA2LCJleHAiOjE1MzMyMDY5MDYsImF6cCI6IjA2azM1NzJXcG1WZHZCbklpWXFaR1kxYzZLenk0dVluIiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIn0.Vad__-y_4GMdsP2X_8tmjTurxVYWOmaUV6s9ZcaqF1Xo3T0P9X9eg-VI6dQc2v8ZRrzoHa0B_18TfeZPOUL_j4TBMlpKP-CqUxHEmFFM5Ae32VY80KfUTZAuxzaXIGud66cBkmi9s3HBz2Lqqq-Y02oGPjCk-NqLgTLLCGficjgHeUh68yqQk3XW0iIB-SpvzRsI9Eo8nAPgpGe6ddXLU7RHVyV5NtkpTCKK5e92DJwPJY4xEdxTal31qYTUI683w4KfuOFepmjhe1VCyVRaB48TGxlova-njutHJaArd6OOtbV-STqjYuU8a36DO0DvRgscstSPzUYx7HT9m7lP0g"
+
+# create new exam
+curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer '$JWT -d '{
+  "title": "TypeScript Advanced Exam",
+  "description": "Tricky questions about TypeScript."
+}' http://0.0.0.0:5000/response
