@@ -5,8 +5,9 @@ from jose import jwt
 from urllib.request import urlopen
 
 
+SECRET_KEY = 'zuUbaO-C13s4QxsvuO5ficeLZARsHo0LEUaHrxSB-vWA5uk5nXoJQtHnBINsLojW'
 AUTH0_DOMAIN = 'sebwb.au.auth0.com'
-ALGORITHMS = ['RS256']
+ALGORITHMS = ['HMAC', 'RS256']
 API_AUDIENCE = 'https://eve.chatbot.ai'
 
 
@@ -59,6 +60,7 @@ def requires_auth(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = get_token_auth_header()
+        print(token)
         jsonurl = urlopen('https://{}/.well-known/jwks.json'.format(AUTH0_DOMAIN))
         jwks = json.loads(jsonurl.read())
         unverified_header = jwt.get_unverified_header(token)
